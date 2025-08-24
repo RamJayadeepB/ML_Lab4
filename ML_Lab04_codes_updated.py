@@ -57,7 +57,7 @@ def classify_grid_with_knn(X_train, y_train, k=3):
     model.fit(X_train, y_train)
 
     x_test, y_test = np.meshgrid(np.arange(0, 10.1, 0.1), np.arange(0, 10.1, 0.1))
-    grid_points = np.c_[x_test.ravel(), y_test.ravel()]
+    grid_points = np.c_[x_test.ravel(), y_test.ravel()] #Converts the grid into a list of (X, Y) pairs for classification.
 
     preds = model.predict(grid_points)
     return x_test, y_test, preds.reshape(x_test.shape)
@@ -86,7 +86,7 @@ def project_knn_boundary(X, y, feature_indices=[0, 1], classes=("rice", "maize")
     X_sub, y_sub = X[mask][:, feature_indices], y[mask]
 
     # Convert class labels to 0/1
-    y_sub = np.where(y_sub == classes[0], 0, 1)
+    y_sub = np.where(y_sub == classes[0], 0, 1) #Convert class labels to binary 
 
     # Train kNN
     model = KNeighborsClassifier(n_neighbors=k)
@@ -118,7 +118,7 @@ def tune_knn_hyperparameter(X_train, y_train, param_grid=None, search="grid"):
 
     knn = KNeighborsClassifier()
     if search == "grid":
-        search_cv = GridSearchCV(knn, param_grid, cv=5)
+        search_cv = GridSearchCV(knn, param_grid, cv=5) #Uses 5-fold cross-validation to evaluate each k
     else:
         search_cv = RandomizedSearchCV(knn, param_grid, cv=5, n_iter=10, random_state=42)
 
@@ -168,8 +168,12 @@ if __name__ == "__main__":
     decision_boundaries_for_k(X_rand, y_rand, k_values=[1, 3, 5, 7])
 
     # A6 (Crop dataset, only two classes + two features)
+    project_knn_boundary(X, y, feature_indices=[0, 1], classes=("rice", "maize"), k=1)
     project_knn_boundary(X, y, feature_indices=[0, 1], classes=("rice", "maize"), k=3)
+    project_knn_boundary(X, y, feature_indices=[0, 1], classes=("rice", "maize"), k=5)
+    project_knn_boundary(X, y, feature_indices=[0, 1], classes=("rice", "maize"), k=7)
 
     # A7
     best_params, best_score = tune_knn_hyperparameter(X_train, y_train, search="grid")
     print("A7 Best Params:", best_params, "Best Score:", best_score)
+
